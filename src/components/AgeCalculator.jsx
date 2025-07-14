@@ -6,7 +6,7 @@ function AgeCalculator() {
 
   const calculateAge = () => {
     if (!dob) {
-      setMessage("⚠️ Please select your date of birth.");
+      setMessage("Please select your date of birth.");
       return;
     }
 
