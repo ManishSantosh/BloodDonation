@@ -1,6 +1,46 @@
 import React from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+// Validation schema
+const schema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  age: yup
+    .number()
+    .typeError("Age must be a number")
+    .min(18, "Minimum age is 18")
+    .required("Age is required"),
+  weight: yup
+    .number()
+    .typeError("Weight must be a number")
+    .min(45, "Minimum weight is 45kg")
+    .required("Weight is required"),
+  address: yup.string().required("Address is required"),
+  phone: yup
+    .string()
+    .matches(/^[6-9]\d{9}$/, "Phone number is not valid")
+    .required("Phone number is required"),
+  bloodGroup: yup
+    .string()
+    .notOneOf(["Choose Blood Group"], "Please select a valid blood group")
+    .required("Blood group is required"),
+});
 
 function JoinForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data) => {
+    console.log("Form submitted:", data);
+    alert("Form Submitted Successfully!");
+  };
+
   return (
     <section id="join" className="bg-secondary text-white py-5">
       <div className="container-fluid">
@@ -17,25 +57,55 @@ function JoinForm() {
               Update your date of donation to hide your profile for 4 months.
             </p>
           </div>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="row">
               <div className="form-group col-md-6 mb-3">
-                <input type="text" className="form-control" placeholder="Name" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Name"
+                  {...register("name")}
+                />
+                <p className="text-danger">{errors.name?.message}</p>
               </div>
               <div className="form-group col-md-3 mb-3">
-                <input type="number" className="form-control" placeholder="Age" min="18" />
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Age"
+                  {...register("age")}
+                />
+                <p className="text-danger">{errors.age?.message}</p>
               </div>
               <div className="form-group col-md-3 mb-3">
-                <input type="text" className="form-control" placeholder="Weight" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Weight"
+                  {...register("weight")}
+                />
+                <p className="text-danger">{errors.weight?.message}</p>
               </div>
               <div className="form-group col-md-6 mb-3">
-                <input type="text" className="form-control" placeholder="Address" />
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Address"
+                  {...register("address")}
+                />
+                <p className="text-danger">{errors.address?.message}</p>
               </div>
               <div className="form-group col-md-3 mb-3">
-                <input type="number" className="form-control" placeholder="Phone Number" />
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Phone Number"
+                  {...register("phone")}
+                />
+                <p className="text-danger">{errors.phone?.message}</p>
               </div>
               <div className="form-group col-md-3 mb-3">
-                <select className="form-control">
+                <select className="form-control" {...register("bloodGroup")}>
                   <option>Choose Blood Group</option>
                   <option>A+</option>
                   <option>A-</option>
@@ -46,9 +116,13 @@ function JoinForm() {
                   <option>AB+</option>
                   <option>AB-</option>
                 </select>
+                <p className="text-danger">{errors.bloodGroup?.message}</p>
               </div>
               <div className="col-12">
-                <button type="submit" className="btn btn-outline-success btn-lg btn-block">
+                <button
+                  type="submit"
+                  className="btn btn-outline-success btn-lg btn-block"
+                >
                   Submit
                 </button>
               </div>
